@@ -1,6 +1,6 @@
 # Hariprabodham Sweets — Diwali storefront (Next.js)
 
-A one-page Diwali storefront with a cart drawer and multi-step checkout (cart → details → payment → confirmation), wired to Razorpay with a demo fallback. Converted from the original single-file `hariprabodham_2.html` (kept in the repo root for reference).
+A one-page Diwali storefront with a cart drawer and multi-step checkout (cart → details → payment → confirmation), wired to Razorpay with a demo fallback. Converted from an original single-file HTML prototype.
 
 ## Run locally
 
