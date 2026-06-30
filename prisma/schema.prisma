@@ -1,0 +1,74 @@
+// Prisma schema — local PostgreSQL.
+// After setting DATABASE_URL in .env, run:  npx prisma migrate dev --name init
+// Browse stored orders any time with:        npx prisma studio
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// One row per placed order. Money is stored as whole-rupee integers.
+model Order {
+  id              String   @id // display id, e.g. HPS-2026-AB12C
+  status          String   @default("PENDING") // PENDING | PAID | DEMO | FAILED
+
+  // payment
+  razorpayOrderId String?  @unique // Razorpay order id (null in demo mode)
+  paymentId       String? // razorpay_payment_id (or DEMO-xxxx)
+  signatureValid  Boolean  @default(false)
+  paymentMethod   String? // upi | card | netbanking (client-reported)
+  currency        String   @default("INR")
+
+  // amounts (₹)
+  subtotal        Int
+  delivery        Int
+  emergency       Int
+  total           Int
+
+  // delivery
+  area            String // mumbai | other
+  deliverBy       String?
+  isBulk          Boolean  @default(false)
+
+  // customer
+  name            String
+  phone           String
+  email           String
+  addressLine     String
+  landmark        String?
+  city            String
+  state           String
+  pincode         String
+  notes           String?
+
+  emailSent       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  items           OrderItem[]
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([email])
+}
+
+model OrderItem {
+  id      Int     @id @default(autoincrement())
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId String
+
+  key     String
+  name    String
+  variant String // "—" when none
+  weight  String
+  perKg   Boolean @default(false)
+  qty     Int
+  unit    Int // ₹ per pack or per kg
+  line    Int // ₹ line total
+
+  @@index([orderId])
+}
