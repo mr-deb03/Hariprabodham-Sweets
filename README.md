@@ -123,3 +123,8 @@ rejected (or acknowledged-and-ignored) without touching any data. To test agains
 expose it with a tunnel (e.g. `ngrok http 3000`) and use the tunnel URL in the dashboard.
 
 > Still optional for hardening: rate-limiting the API routes (e.g. with Upstash) — not added yet.
+
+## License
+
+© 2026 Hariprabodham Sweets. All rights reserved. This source is proprietary and is
+**not** licensed for reuse, redistribution, or modification without permission.
