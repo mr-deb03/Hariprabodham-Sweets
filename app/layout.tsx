@@ -27,7 +27,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={`${jakarta.variable} ${bricolage.variable}`}>
         <CartProvider>
-          <div className="bgglow" />
           <div className="content">{children}</div>
           <CartDrawer />
         </CartProvider>
