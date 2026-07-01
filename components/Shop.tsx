@@ -1,11 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCart } from "@/lib/cart-context";
 import { CONFIG, type KatliWeight, rupee, fmt, cutReg, cutBulk } from "@/lib/config";
 
 function ProductImage({ src, label }: { src: string; label: string }) {
   const [failed, setFailed] = useState(false);
+  const ref = useRef<HTMLImageElement>(null);
+
+  // Catch a 404 that fired before React hydrated — onError alone can miss it,
+  // leaving a broken-image icon. A broken/loaded image has naturalWidth 0.
+  useEffect(() => {
+    const img = ref.current;
+    if (img && img.complete && img.naturalWidth === 0) setFailed(true);
+  }, []);
+
   if (!src || failed) {
     return (
       <div className="pimg pimg-ph" aria-hidden="true">
@@ -18,7 +27,7 @@ function ProductImage({ src, label }: { src: string; label: string }) {
     <div className="pimg">
       {/* plain img so a missing file falls back to the placeholder via onError */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={src} alt={label} onError={() => setFailed(true)} />
+      <img ref={ref} src={src} alt={label} onError={() => setFailed(true)} />
     </div>
   );
 }
@@ -138,9 +147,9 @@ function PakCard() {
   const [qty, setQty] = useState(1);
   return (
     <div className="pcard">
-      <ProductImage src={CONFIG.images.pak} label="Kaju Pak" />
-      <h3>Kaju Pak</h3>
-      <p className="desc">Dense, fudgy cashew pak. Made in 1 kg packs only.</p>
+      <ProductImage src={CONFIG.images.pak} label="Mysore Pak" />
+      <h3>Mysore Pak</h3>
+      <p className="desc">Rich, melt-in-mouth mysore pak. Made in 1 kg packs only.</p>
       <div className="lab">Weight</div>
       <div className="seg">
         <button className="on" style={{ cursor: "default" }}>
@@ -153,7 +162,7 @@ function PakCard() {
         <button
           className="add"
           onClick={() =>
-            add({ name: "Kaju Pak", variant: "—", weight: "1kg", unit: CONFIG.pak["1kg"].price, qty, key: "pak-1kg" })
+            add({ name: "Mysore Pak", variant: "—", weight: "1kg", unit: CONFIG.pak["1kg"].price, qty, key: "pak-1kg" })
           }
         >
           Add to cart
@@ -168,7 +177,7 @@ function BulkCard({ prod }: { prod: "katli" | "pak" }) {
   const { add } = useCart();
   const isK = prod === "katli";
   const rate = isK ? CONFIG.bulkKatliPerKg : CONFIG.bulkPakPerKg;
-  const title = isK ? "Kaju Katli" : "Kaju Pak";
+  const title = isK ? "Kaju Katli" : "Mysore Pak";
   const [v, setV] = useState(0);
   const [kg, setKg] = useState(10);
   const kgs: number[] = [];
@@ -178,7 +187,7 @@ function BulkCard({ prod }: { prod: "katli" | "pak" }) {
     <div className="pcard">
       <ProductImage src={isK ? CONFIG.images.katli : CONFIG.images.pak} label={title + " · bulk"} />
       <h3>{title} — bulk</h3>
-      <p className="desc">{isK ? "By total weight. Choose varak below." : "Dense cashew pak, by total weight."}</p>
+      <p className="desc">{isK ? "By total weight. Choose varak below." : "Rich, melt-in-mouth mysore pak, by total weight."}</p>
       {isK && (
         <>
           <div className="lab">Finish</div>

@@ -37,7 +37,7 @@ export const CONFIG: Config = {
 
   // Product photos: drop files at these paths in /public (e.g. public/kaju-katli.jpg).
   // Until they exist, a branded placeholder tile is shown automatically.
-  images: { katli: "/kaju-katli.jpg", pak: "/kaju-pak.jpg" },
+  images: { katli: "/kaju-katli.jpg", pak: "/mysore-pak.jpg" },
 
   // Shown in each product card's expandable "Ingredients & storage" detail.
   details: {
@@ -47,9 +47,10 @@ export const CONFIG: Config = {
       allergens: "Contains cashew (tree nuts) & dairy.",
     },
     pak: {
-      ingredients: "Cashew, sugar, khoya (milk solids), ghee, cardamom",
-      storage: "Best kept refrigerated. Enjoy within 7–8 days.",
-      allergens: "Contains cashew (tree nuts) & dairy.",
+      // NOTE: standard Mysore Pak recipe — please verify against your actual product.
+      ingredients: "Gram flour (besan), pure ghee, sugar, cardamom",
+      storage: "Keep cool & dry. Best enjoyed within 12–15 days.",
+      allergens: "Contains dairy (ghee). Made in a kitchen that also handles cashew.",
     },
   },
 
@@ -59,7 +60,7 @@ export const CONFIG: Config = {
   // Kaju Katli — same price with or without varak. mrp = struck "before" price.
   katli: { "250g": { mrp: 550, price: 400 }, "500g": { mrp: 1000, price: 700 }, "1kg": { mrp: 2000, price: 1400 } },
   katliVarakExtra: 0, // both finishes priced the same
-  pak: { "1kg": { mrp: 2000, price: 1600 } }, // Kaju Pak, 1kg only
+  pak: { "1kg": { mrp: 2000, price: 1600 } }, // Mysore Pak, 1kg only (internal key stays "pak")
 
   bulkKatliPerKg: 1400, // per-kg rate for 10–100 kg
   bulkPakPerKg: 1600,
@@ -79,7 +80,7 @@ export const REVIEWS = [
   { n: "Meera Shah", c: "Mumbai", t: "Tastes exactly like home. The varak katli was gone in a day! Ordering again next year." },
   { n: "Rohan Patel", c: "Surat", t: "Reached two days before Diwali, perfectly packed. And it's for a good cause — couldn't ask for more." },
   { n: "Anjali Rao", c: "Pune", t: "We sent corporate boxes to 40 clients. Everyone asked where we got them. Fresh and beautiful." },
-  { n: "Karthik N.", c: "Bengaluru", t: "Kaju Pak is dangerously good. Soft, rich, not too sweet. Worth every rupee." },
+  { n: "Karthik N.", c: "Bengaluru", t: "Mysore Pak is dangerously good. Soft, rich, not too sweet. Worth every rupee." },
 ];
 
 export const FAQ: [string, string][] = [

@@ -42,11 +42,11 @@ export function parseLine(key: string, qtyInput: number): ParsedLine {
     return { key: k, name: "Kaju Katli", variant: v ? "With varak" : "Without varak", weight: w, perKg: false, unit, qty, line: unit * qty };
   }
 
-  // Regular Kaju Pak (1kg only)
+  // Regular Mysore Pak (1kg only)
   if (k === "pak-1kg") {
     if (!Number.isInteger(qty) || qty < 1) throw new Error("Bad quantity for " + k);
     const unit = CONFIG.pak["1kg"].price;
-    return { key: k, name: "Kaju Pak", variant: "—", weight: "1kg", perKg: false, unit, qty, line: unit * qty };
+    return { key: k, name: "Mysore Pak", variant: "—", weight: "1kg", perKg: false, unit, qty, line: unit * qty };
   }
 
   // Bulk: bulk-<katli|pak>-<varak 0|1>-<kg>; qty must equal the kg in the key
@@ -60,7 +60,7 @@ export function parseLine(key: string, qtyInput: number): ParsedLine {
     const unit = isK ? CONFIG.bulkKatliPerKg : CONFIG.bulkPakPerKg;
     return {
       key: k,
-      name: "Bulk " + (isK ? "Kaju Katli" : "Kaju Pak"),
+      name: "Bulk " + (isK ? "Kaju Katli" : "Mysore Pak"),
       variant: isK ? (v ? "With varak" : "Without varak") : "—",
       weight: kg + "kg",
       perKg: true,

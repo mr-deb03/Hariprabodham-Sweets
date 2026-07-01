@@ -11,7 +11,7 @@ const bricolage = Bricolage_Grotesque({ subsets: ["latin"], variable: "--font-br
 export const metadata: Metadata = {
   title: "Hariprabodham Sweets — Diwali Special",
   description:
-    "Hariprabodham Sweets opens once a year for Diwali — handmade Kaju Katli & Kaju Pak. Free Mumbai delivery, pan-India shipping, and 100% of profit goes to seva.",
+    "Hariprabodham Sweets opens once a year for Diwali — handmade Kaju Katli & Mysore Pak. Free Mumbai delivery, pan-India shipping, and 100% of profit goes to seva.",
   openGraph: {
     type: "website",
     title: "Hariprabodham Sweets — Diwali Special",
