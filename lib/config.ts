@@ -35,9 +35,9 @@ export const CONFIG: Config = {
 
   ESTABLISHED: 2018, // first Diwali — powers the "Since 2018" heritage mark
 
-  // Product photos: drop files at these paths in /public (e.g. public/kaju-katli.jpg).
-  // Until they exist, a branded placeholder tile is shown automatically.
-  images: { katli: "/kaju-katli.jpg", pak: "/mysore-pak.jpg" },
+  // Product photos live in /public (optimized WebP, 1200×900, 4:3, ~160 KB each).
+  // If a file is missing, a branded placeholder tile is shown automatically.
+  images: { katli: "/kaju-katli.webp", pak: "/mysore-pak.webp" },
 
   // Shown in each product card's expandable "Ingredients & storage" detail.
   details: {
