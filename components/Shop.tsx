@@ -4,6 +4,49 @@ import { useState } from "react";
 import { useCart } from "@/lib/cart-context";
 import { CONFIG, type KatliWeight, rupee, fmt, cutReg, cutBulk } from "@/lib/config";
 
+function ProductImage({ src, label }: { src: string; label: string }) {
+  const [failed, setFailed] = useState(false);
+  if (!src || failed) {
+    return (
+      <div className="pimg pimg-ph" aria-hidden="true">
+        <span className="pimg-mark" />
+        <small>{label}</small>
+      </div>
+    );
+  }
+  return (
+    <div className="pimg">
+      {/* plain img so a missing file falls back to the placeholder via onError */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={src} alt={label} onError={() => setFailed(true)} />
+    </div>
+  );
+}
+
+function ProductDetail({
+  d,
+  extra,
+}: {
+  d: { ingredients: string; storage: string; allergens: string };
+  extra?: string;
+}) {
+  return (
+    <details className="pdetail">
+      <summary>Ingredients &amp; storage</summary>
+      <div className="pdetail-body">
+        <p>
+          <b>Ingredients</b> {d.ingredients}
+          {extra ? ` · ${extra}` : ""}
+        </p>
+        <p>
+          <b>Storage</b> {d.storage}
+        </p>
+        <p className="allergen">{d.allergens}</p>
+      </div>
+    </details>
+  );
+}
+
 function PriceBlock({ price, mrp }: { price: number; mrp: number }) {
   const save = mrp - price;
   return (
@@ -46,7 +89,7 @@ function KatliCard() {
 
   return (
     <div className="pcard">
-      <div className="ribbon">Diwali offer</div>
+      <ProductImage src={CONFIG.images.katli} label="Kaju Katli" />
       <h3>Kaju Katli</h3>
       <p className="desc">Thin cashew diamonds — soft, rich, melt-in-mouth.</p>
       <div className="lab">Finish</div>
@@ -85,6 +128,7 @@ function KatliCard() {
           Add to cart
         </button>
       </div>
+      <ProductDetail d={CONFIG.details.katli} extra={v ? "edible silver varak" : undefined} />
     </div>
   );
 }
@@ -94,9 +138,7 @@ function PakCard() {
   const [qty, setQty] = useState(1);
   return (
     <div className="pcard">
-      <div className="ribbon" style={{ background: "var(--gold-deep)" }}>
-        Diwali offer
-      </div>
+      <ProductImage src={CONFIG.images.pak} label="Kaju Pak" />
       <h3>Kaju Pak</h3>
       <p className="desc">Dense, fudgy cashew pak. Made in 1 kg packs only.</p>
       <div className="lab">Weight</div>
@@ -117,6 +159,7 @@ function PakCard() {
           Add to cart
         </button>
       </div>
+      <ProductDetail d={CONFIG.details.pak} />
     </div>
   );
 }
@@ -133,6 +176,7 @@ function BulkCard({ prod }: { prod: "katli" | "pak" }) {
 
   return (
     <div className="pcard">
+      <ProductImage src={isK ? CONFIG.images.katli : CONFIG.images.pak} label={title + " · bulk"} />
       <h3>{title} — bulk</h3>
       <p className="desc">{isK ? "By total weight. Choose varak below." : "Dense cashew pak, by total weight."}</p>
       {isK && (
@@ -158,7 +202,7 @@ function BulkCard({ prod }: { prod: "katli" | "pak" }) {
       </div>
       <div className="priceblock">
         <span className="new num">{rupee(rate * kg)}</span>
-        <span className="old" style={{ textDecoration: "none", color: "var(--muted-d)" }}>
+        <span className="old" style={{ textDecoration: "none", color: "var(--muted)" }}>
           {kg} kg × {rupee(rate)}/kg
         </span>
       </div>
@@ -180,6 +224,7 @@ function BulkCard({ prod }: { prod: "katli" | "pak" }) {
           Add to cart
         </button>
       </div>
+      <ProductDetail d={isK ? CONFIG.details.katli : CONFIG.details.pak} extra={isK && v ? "edible silver varak" : undefined} />
     </div>
   );
 }

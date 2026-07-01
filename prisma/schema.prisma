@@ -56,6 +56,16 @@ model Order {
   @@index([email])
 }
 
+// "Notify me next Diwali" signups — for re-engaging customers when orders reopen.
+model Subscriber {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  source    String   @default("notify")
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
 model OrderItem {
   id      Int     @id @default(autoincrement())
   order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)

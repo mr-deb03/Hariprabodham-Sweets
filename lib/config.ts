@@ -10,6 +10,9 @@ export interface Config {
   DELIVER_BY: string;
   CUT_REGULAR_DAYS: number;
   CUT_BULK_DAYS: number;
+  ESTABLISHED: number;
+  images: { katli: string; pak: string };
+  details: Record<"katli" | "pak", { ingredients: string; storage: string; allergens: string }>;
   katli: Record<KatliWeight, { mrp: number; price: number }>;
   katliVarakExtra: number;
   pak: Record<"1kg", { mrp: number; price: number }>;
@@ -29,6 +32,26 @@ export const CONFIG: Config = {
   DELIVER_BY: "6 Nov", // regular orders arrive ~2 days before Diwali
   CUT_REGULAR_DAYS: 7, // last regular order: 1 week before Diwali
   CUT_BULK_DAYS: 14, // bulk / corporate: 2 weeks before
+
+  ESTABLISHED: 2018, // first Diwali — powers the "Since 2018" heritage mark
+
+  // Product photos: drop files at these paths in /public (e.g. public/kaju-katli.jpg).
+  // Until they exist, a branded placeholder tile is shown automatically.
+  images: { katli: "/kaju-katli.jpg", pak: "/kaju-pak.jpg" },
+
+  // Shown in each product card's expandable "Ingredients & storage" detail.
+  details: {
+    katli: {
+      ingredients: "Cashew, sugar, pure ghee",
+      storage: "Keep cool & dry. Best enjoyed within 10–12 days.",
+      allergens: "Contains cashew (tree nuts) & dairy.",
+    },
+    pak: {
+      ingredients: "Cashew, sugar, khoya (milk solids), ghee, cardamom",
+      storage: "Best kept refrigerated. Enjoy within 7–8 days.",
+      allergens: "Contains cashew (tree nuts) & dairy.",
+    },
+  },
 
   // Razorpay keys are NOT here — they are server-side env vars (see .env.example):
   //   RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET
