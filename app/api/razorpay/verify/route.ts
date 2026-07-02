@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
-import { confirmAndEmail } from "@/lib/orders";
+import { confirmAndEmailInBackground } from "@/lib/orders";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -43,8 +43,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: "Signature verification failed" }, { status: 400 });
   }
 
-  // Authentic → mark paid + email confirmation (idempotent; shared with the webhook).
-  const result = await confirmAndEmail(razorpay_order_id, razorpay_payment_id);
+  // Authentic → mark paid now, email in the background so the buyer's confirmation
+  // screen doesn't wait on SMTP. The webhook is the backstop if the email fails.
+  const result = await confirmAndEmailInBackground(razorpay_order_id, razorpay_payment_id);
 
   return NextResponse.json({ ok: true, paymentId: razorpay_payment_id, orderId: result.id });
 }

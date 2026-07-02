@@ -107,51 +107,70 @@ export async function markEmailSent(id: string) {
   }
 }
 
-/* Mark an order paid and email its confirmation exactly once.
-   Shared by the verify route (client callback) and the webhook (backstop), so
-   whichever arrives first does the work and the other is a no-op. The email is
-   only sent when emailSent is still false, so it won't be sent twice. */
+type PaidOrder = NonNullable<Awaited<ReturnType<typeof markOrderPaid>>>;
+
+/* Send the confirmation email for an already-paid order — exactly once.
+   Guards on emailSent so the verify route and the webhook backstop can't both
+   send it. Returns true only if an email actually went out. */
+async function emailConfirmationOnce(order: PaidOrder): Promise<boolean> {
+  if (order.emailSent) return false;
+  const mail = await sendOrderConfirmation({
+    id: order.id,
+    paymentId: order.paymentId,
+    paymentMethod: order.paymentMethod,
+    area: order.area,
+    deliverBy: order.deliverBy,
+    subtotal: order.subtotal,
+    delivery: order.delivery,
+    emergency: order.emergency,
+    total: order.total,
+    name: order.name,
+    phone: order.phone,
+    email: order.email,
+    addressLine: order.addressLine,
+    landmark: order.landmark,
+    city: order.city,
+    state: order.state,
+    pincode: order.pincode,
+    notes: order.notes,
+    lines: order.items.map((i) => ({
+      name: i.name,
+      variant: i.variant,
+      weight: i.weight,
+      perKg: i.perKg,
+      qty: i.qty,
+      line: i.line,
+    })),
+  });
+  if (!mail.sent) return false;
+  await markEmailSent(order.id);
+  return true;
+}
+
+/* Mark an order paid and email its confirmation, awaiting both.
+   Used by the webhook backstop, where no user is waiting on the response. */
 export async function confirmAndEmail(
   razorpayOrderId: string,
   paymentId: string,
 ): Promise<{ id: string | null; paid: boolean; emailed: boolean }> {
   const order = await markOrderPaid(razorpayOrderId, paymentId);
   if (!order) return { id: null, paid: false, emailed: false };
-
-  let emailed = false;
-  if (!order.emailSent) {
-    const mail = await sendOrderConfirmation({
-      id: order.id,
-      paymentId: order.paymentId,
-      paymentMethod: order.paymentMethod,
-      area: order.area,
-      deliverBy: order.deliverBy,
-      subtotal: order.subtotal,
-      delivery: order.delivery,
-      emergency: order.emergency,
-      total: order.total,
-      name: order.name,
-      phone: order.phone,
-      email: order.email,
-      addressLine: order.addressLine,
-      landmark: order.landmark,
-      city: order.city,
-      state: order.state,
-      pincode: order.pincode,
-      notes: order.notes,
-      lines: order.items.map((i) => ({
-        name: i.name,
-        variant: i.variant,
-        weight: i.weight,
-        perKg: i.perKg,
-        qty: i.qty,
-        line: i.line,
-      })),
-    });
-    if (mail.sent) {
-      await markEmailSent(order.id);
-      emailed = true;
-    }
-  }
+  const emailed = await emailConfirmationOnce(order);
   return { id: order.id, paid: true, emailed };
+}
+
+/* Same, but for the buyer-facing verify route: mark paid (fast, awaited) and
+   return right away, sending the email in the background so the customer's
+   "payment confirmed" screen never blocks on SMTP. The webhook stays a backstop
+   if the email fails here. The rejection is caught so it can't go unhandled. */
+export async function confirmAndEmailInBackground(
+  razorpayOrderId: string,
+  paymentId: string,
+): Promise<{ id: string | null; paid: boolean }> {
+  const order = await markOrderPaid(razorpayOrderId, paymentId);
+  if (!order) return { id: null, paid: false };
+  void emailConfirmationOnce(order).catch((e) =>
+    console.error(`[orders] background confirmation email failed for ${order.id}:`, e),
+  );
+  return { id: order.id, paid: true };
 }
